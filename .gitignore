@@ -54,7 +54,4 @@ htmlcov/
 
 # Alembic
 alembic/versions/*.pyc
-
-PROJECT_PLAN.md 
-WORKINFO
-COMMANDS.md
+plan
