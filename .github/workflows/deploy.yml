@@ -69,7 +69,7 @@ jobs:
           cd frontend
           zip -r ../frontend.zip \
             dist/ \
-            server.js \
+            server.cjs \
             package.json \
             node_modules/
 
