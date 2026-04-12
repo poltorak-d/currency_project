@@ -55,3 +55,12 @@ htmlcov/
 # Alembic
 alembic/versions/*.pyc
 plan
+# Terraform
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/tfplan
+# terraform/.terraform.lock.hcl  ← intentionally tracked (provider version lock)
+
+# Azure credentials backup
+.azure-credentials.json

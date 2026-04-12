@@ -15,15 +15,23 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 settings = get_settings()
-sync_url = settings.database_url.replace("postgresql+asyncpg", "postgresql+psycopg2")
-config.set_main_option("sqlalchemy.url", sync_url)
+config.set_main_option("sqlalchemy.url", settings.database_url)
 
 target_metadata = Base.metadata
 
 
+def _offline_sync_url() -> str:
+    url = settings.database_url
+    if url.startswith("postgresql+asyncpg"):
+        return url.replace("postgresql+asyncpg", "postgresql+psycopg2")
+    if url.startswith("mssql+aioodbc"):
+        return url.replace("mssql+aioodbc", "mssql+pyodbc")
+    return url
+
+
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode."""
-    url = config.get_main_option("sqlalchemy.url")
+    url = _offline_sync_url()
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -42,7 +50,6 @@ def do_run_migrations(connection: Connection) -> None:
 
 
 async def run_async_migrations() -> None:
-    """In concurrency with async engine."""
     connectable = async_engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",

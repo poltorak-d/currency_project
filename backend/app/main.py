@@ -21,7 +21,9 @@ async def lifespan(app: FastAPI):
     await init_db()
     ok = await check_db_connection()
     if not ok:
-        logger.warning("Database connection check failed - ensure PostgreSQL is running")
+        logger.warning(
+            "Database connection check failed — ensure PostgreSQL (local) or Azure SQL is reachable"
+        )
     yield
     # shutdown: close connections etc. if needed
 

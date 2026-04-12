@@ -4,7 +4,7 @@ from datetime import date, datetime
 from decimal import Decimal
 
 from sqlalchemy import Date, DateTime, Numeric, String, UniqueConstraint, Index, text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.types import Uuid
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.database import Base
@@ -21,10 +21,9 @@ class ExchangeRate(Base):
     )
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+        Uuid,
         primary_key=True,
         default=uuid.uuid4,
-        server_default=text("gen_random_uuid()"),
     )
     currency: Mapped[str] = mapped_column(String(3), nullable=False, index=True)
     rate: Mapped[Decimal] = mapped_column(Numeric(10, 4), nullable=False)
@@ -33,7 +32,7 @@ class ExchangeRate(Base):
         DateTime,
         nullable=False,
         default=datetime.utcnow,
-        server_default=text("NOW()"),
+        server_default=text("CURRENT_TIMESTAMP"),
     )
 
     def __repr__(self) -> str:

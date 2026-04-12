@@ -8,13 +8,31 @@ from app.config import get_settings
 
 settings = get_settings()
 
-engine = create_async_engine(
-    settings.database_url,
-    echo=False,
-    pool_pre_ping=True,
-    pool_size=5,
-    max_overflow=10,
-)
+
+def _create_engine():
+    url = settings.database_url
+    if url.startswith("postgresql+asyncpg"):
+        return create_async_engine(
+            url,
+            echo=False,
+            pool_pre_ping=True,
+            pool_size=5,
+            max_overflow=10,
+        )
+    if url.startswith("mssql+aioodbc"):
+        return create_async_engine(
+            url,
+            echo=False,
+            pool_pre_ping=True,
+            pool_size=5,
+            max_overflow=10,
+        )
+    raise ValueError(
+        "Unsupported database_url (expected postgresql+asyncpg://... or mssql+aioodbc://...)"
+    )
+
+
+engine = _create_engine()
 
 AsyncSessionLocal = async_sessionmaker(
     engine,

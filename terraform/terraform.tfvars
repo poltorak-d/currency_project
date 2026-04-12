@@ -1,0 +1,5 @@
+subscription_id     = "fb8effb1-1f5e-4e2a-9448-c9cd3c9c2159"
+location            = "francecentral"
+resource_group_name = "rg-currency-project"
+app_name_prefix     = "currency"
+sql_admin_username  = "dbadmin"
