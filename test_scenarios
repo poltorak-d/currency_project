@@ -1,0 +1,298 @@
+Scenariusze testowe dla funkcji „Wykres historyczny”
+
+SC-01 – Wyświetlenie widoku „Wykres historyczny”
+
+Cel: sprawdzenie, czy po wejściu do zakładki użytkownik widzi poprawny formularz.
+Warunki wstępne: aplikacja jest uruchomiona.
+Kroki:
+	1.	Uruchomić aplikację.
+	2.	Wejść do zakładki „Wykres historyczny”.
+
+Oczekiwany rezultat:
+	•	widoczny jest formularz wyboru waluty,
+	•	widoczne są dwa pola dat,
+	•	widoczny jest przycisk „Pokaż wykres”,
+	•	interfejs ładuje się poprawnie bez błędów.
+
+⸻
+
+SC-02 – Wygenerowanie wykresu dla poprawnych danych
+
+Cel: sprawdzenie, czy aplikacja poprawnie generuje wykres po podaniu prawidłowych danych.
+Warunki wstępne: użytkownik znajduje się w zakładce „Wykres historyczny”.
+Kroki:
+	1.	Wybrać walutę, np. USD.
+	2.	Wybrać datę początkową.
+	3.	Wybrać datę końcową późniejszą niż początkowa.
+	4.	Kliknąć „Pokaż wykres”.
+
+Oczekiwany rezultat:
+	•	aplikacja pobiera dane,
+	•	wyświetla się wykres kursu waluty w wybranym okresie,
+	•	dane na wykresie odpowiadają wybranej walucie i zakresowi dat.
+
+⸻
+
+SC-03 – Brak wybranej waluty
+
+Cel: sprawdzenie reakcji systemu, gdy użytkownik nie wybierze waluty.
+Kroki:
+	1.	Pozostawić pole waluty puste.
+	2.	Wybrać poprawny zakres dat.
+	3.	Kliknąć „Pokaż wykres”.
+
+Oczekiwany rezultat:
+	•	wykres nie zostaje wygenerowany,
+	•	użytkownik otrzymuje komunikat o konieczności wybrania waluty.
+
+⸻
+
+SC-04 – Brak daty początkowej
+
+Cel: sprawdzenie walidacji formularza przy braku daty początkowej.
+Kroki:
+	1.	Wybrać walutę.
+	2.	Nie wybierać daty początkowej.
+	3.	Ustawić tylko datę końcową.
+	4.	Kliknąć „Pokaż wykres”.
+
+Oczekiwany rezultat:
+	•	aplikacja nie generuje wykresu,
+	•	pojawia się komunikat o konieczności uzupełnienia daty początkowej.
+
+⸻
+
+SC-05 – Brak daty końcowej
+
+Cel: sprawdzenie walidacji formularza przy braku daty końcowej.
+Kroki:
+	1.	Wybrać walutę.
+	2.	Ustawić datę początkową.
+	3.	Nie wybierać daty końcowej.
+	4.	Kliknąć „Pokaż wykres”.
+
+Oczekiwany rezultat:
+	•	wykres nie zostaje wygenerowany,
+	•	aplikacja wyświetla komunikat o konieczności uzupełnienia daty końcowej.
+
+⸻
+
+SC-06 – Data początkowa późniejsza niż końcowa
+
+Cel: sprawdzenie poprawności walidacji zakresu dat.
+Kroki:
+	1.	Wybrać walutę.
+	2.	Ustawić datę początkową późniejszą niż końcowa.
+	3.	Kliknąć „Pokaż wykres”.
+
+Oczekiwany rezultat:
+	•	wykres nie zostaje wygenerowany,
+	•	użytkownik otrzymuje komunikat, że data początkowa nie może być późniejsza od końcowej.
+
+⸻
+
+SC-07 – Taki sam dzień jako data początkowa i końcowa
+
+Cel: sprawdzenie działania aplikacji dla jednego dnia.
+Kroki:
+	1.	Wybrać walutę.
+	2.	Ustawić tę samą datę w obu polach.
+	3.	Kliknąć „Pokaż wykres”.
+
+Oczekiwany rezultat:
+	•	aplikacja zachowuje się zgodnie z założeniem biznesowym:
+	•	albo wyświetla wykres/dane dla jednego dnia,
+	•	albo pokazuje komunikat, że zakres musi obejmować więcej niż jeden dzień.
+
+⸻
+
+SC-08 – Zakres dat obejmuje dni bez publikacji kursu
+
+Cel: sprawdzenie działania aplikacji dla weekendów lub świąt.
+Kroki:
+	1.	Wybrać walutę.
+	2.	Ustawić zakres dat obejmujący weekend lub dzień wolny.
+	3.	Kliknąć „Pokaż wykres”.
+
+Oczekiwany rezultat:
+	•	aplikacja nie zawiesza się,
+	•	dane są pokazane tylko dla dni, dla których kurs jest dostępny,
+	•	albo użytkownik otrzymuje czytelny komunikat, jeśli w danym zakresie brak danych.
+
+⸻
+
+SC-09 – Bardzo szeroki zakres dat
+
+Cel: sprawdzenie działania aplikacji przy dużej ilości danych.
+Kroki:
+	1.	Wybrać walutę.
+	2.	Ustawić szeroki zakres dat, np. kilka miesięcy lub rok.
+	3.	Kliknąć „Pokaż wykres”.
+
+Oczekiwany rezultat:
+	•	aplikacja nadal działa poprawnie,
+	•	wykres generuje się bez błędów,
+	•	interfejs pozostaje czytelny.
+
+⸻
+
+SC-10 – Błąd pobierania danych z API
+
+Cel: sprawdzenie obsługi błędu zewnętrznego źródła danych.
+Kroki:
+	1.	Wybrać poprawne dane.
+	2.	Wywołać sytuację, w której API nie zwróci danych albo zwróci błąd.
+
+Oczekiwany rezultat:
+	•	aplikacja nie wyświetla pustego lub uszkodzonego wykresu bez informacji,
+	•	pojawia się komunikat o błędzie pobierania danych,
+	•	użytkownik może ponowić próbę.
+
+⸻
+
+3. Scenariusze testowe dla funkcji „Porównanie dni”
+
+SC-11 – Wyświetlenie zakładki „Porównanie dni”
+
+Cel: sprawdzenie poprawności załadowania widoku porównania.
+Kroki:
+	1.	Uruchomić aplikację.
+	2.	Przejść do zakładki „Porównanie dni”.
+
+Oczekiwany rezultat:
+	•	widoczny jest formularz umożliwiający wybór waluty i dwóch dat,
+	•	widoczny jest przycisk uruchamiający porównanie.
+
+⸻
+
+SC-12 – Porównanie kursu dla dwóch poprawnych dat
+
+Cel: sprawdzenie poprawnego działania funkcji porównania.
+Kroki:
+	1.	Wybrać walutę.
+	2.	Ustawić pierwszą datę.
+	3.	Ustawić drugą datę.
+	4.	Kliknąć przycisk porównania.
+
+Oczekiwany rezultat:
+	•	aplikacja wyświetla kurs z pierwszego dnia,
+	•	wyświetla kurs z drugiego dnia,
+	•	pokazuje różnicę wartości lub informację, czy kurs wzrósł, czy spadł.
+
+⸻
+
+SC-13 – Brak jednej z dat w porównaniu
+
+Cel: sprawdzenie walidacji formularza porównania.
+Kroki:
+	1.	Wybrać walutę.
+	2.	Uzupełnić tylko jedną z dwóch dat.
+	3.	Kliknąć przycisk porównania.
+
+Oczekiwany rezultat:
+	•	porównanie nie zostaje wykonane,
+	•	pojawia się komunikat o konieczności podania obu dat.
+
+⸻
+
+SC-14 – Porównanie tej samej daty
+
+Cel: sprawdzenie zachowania systemu dla identycznych dat.
+Kroki:
+	1.	Wybrać walutę.
+	2.	Ustawić tę samą datę jako pierwszą i drugą.
+	3.	Wykonać porównanie.
+
+Oczekiwany rezultat:
+	•	aplikacja pokazuje brak zmiany kursu,
+	•	albo wyświetla komunikat, że porównanie tej samej daty nie ma sensu, jeśli tak ustalono w wymaganiach.
+
+⸻
+
+SC-15 – Jedna z dat przypada na dzień bez kursu
+
+Cel: sprawdzenie zachowania systemu, gdy dla jednej z dat nie ma danych.
+Kroki:
+	1.	Wybrać walutę.
+	2.	Ustawić jedną datę roboczą i jedną np. świąteczną.
+	3.	Kliknąć porównanie.
+
+Oczekiwany rezultat:
+	•	aplikacja poprawnie obsługuje brak danych,
+	•	wyświetla komunikat albo pobiera najbliższe dostępne dane, jeśli tak działa logika systemu.
+
+⸻
+
+4. Scenariusze testowe ogólne i użyteczności
+
+SC-16 – Zmiana zakładki między funkcjami
+
+Cel: sprawdzenie przełączania pomiędzy „Wykres historyczny” a „Porównanie dni”.
+Kroki:
+	1.	Otworzyć zakładkę „Wykres historyczny”.
+	2.	Przejść do zakładki „Porównanie dni”.
+	3.	Wrócić do poprzedniej zakładki.
+
+Oczekiwany rezultat:
+	•	przełączanie działa poprawnie,
+	•	aplikacja nie zawiesza się,
+	•	widok każdej zakładki jest spójny.
+
+⸻
+
+SC-17 – Czytelność komunikatów błędów
+
+Cel: sprawdzenie, czy użytkownik rozumie przyczynę błędu.
+Kroki:
+	1.	Wprowadzić niepoprawne dane, np. pusty formularz.
+	2.	Spróbować uruchomić funkcję.
+
+Oczekiwany rezultat:
+	•	komunikat jasno wskazuje, co należy poprawić,
+	•	komunikat nie jest techniczny i niezrozumiały.
+
+⸻
+
+SC-18 – Responsywność interfejsu
+
+Cel: sprawdzenie działania aplikacji przy różnych rozdzielczościach.
+Kroki:
+	1.	Otworzyć aplikację na szerokim ekranie.
+	2.	Zmniejszyć szerokość okna.
+	3.	Sprawdzić widok na mniejszych rozmiarach.
+
+Oczekiwany rezultat:
+	•	elementy formularza nie nachodzą na siebie,
+	•	przyciski i pola pozostają dostępne,
+	•	tekst jest czytelny.
+
+⸻
+
+SC-19 – Poprawność listy walut
+
+Cel: sprawdzenie, czy użytkownik może wybrać dostępne waluty.
+Kroki:
+	1.	Otworzyć listę wyboru waluty.
+
+Oczekiwany rezultat:
+	•	lista zawiera poprawne pozycje,
+	•	nazwy walut są czytelne,
+	•	wybranie waluty aktualizuje formularz poprawnie.
+
+⸻
+
+SC-20 – Zachowanie aplikacji po odświeżeniu strony
+
+Cel: sprawdzenie stabilności aplikacji po reloadzie.
+Kroki:
+	1.	Uzupełnić formularz.
+	2.	Odświeżyć stronę.
+
+Oczekiwany rezultat:
+	•	aplikacja uruchamia się poprawnie,
+	•	nie pokazuje błędów,
+	•	zachowanie danych formularza jest zgodne z projektem:
+	•	albo pola się resetują,
+	•	albo zachowują ostatni stan.
+
+⸻
