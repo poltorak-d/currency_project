@@ -6,6 +6,10 @@ on:
       - main
   workflow_dispatch:
 
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   # ── Test Backend ─────────────────────────────────────────────────────────────
   test-backend:
@@ -50,15 +54,25 @@ jobs:
             --exclude=".env"
 
       - name: Deploy to App Service
-        uses: Wandalen/wretry.action@v3
-        with:
-          action: azure/webapps-deploy@v3
-          with: |
-            app-name: ${{ secrets.BACKEND_APP_NAME }}
-            publish-profile: ${{ secrets.BACKEND_PUBLISH_PROFILE }}
-            package: backend.zip
-          attempt_limit: 3
-          attempt_delay: 30000
+        env:
+          PROFILE: ${{ secrets.BACKEND_PUBLISH_PROFILE }}
+        run: |
+          SCM=$(echo "$PROFILE" | grep -oP 'publishUrl="\K[^"]+' | head -1 | sed 's/:443//')
+          USER=$(echo "$PROFILE" | grep -oP 'userName="\K[^"]+' | head -1)
+          PASS=$(echo "$PROFILE" | grep -oP 'userPWD="\K[^"]+' | head -1)
+          for i in 1 2 3; do
+            echo "Deploy attempt $i..."
+            CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+              "https://${SCM}/api/zipdeploy" \
+              -u "${USER}:${PASS}" \
+              -H "Content-Type: application/zip" \
+              --data-binary @backend.zip \
+              --max-time 300)
+            echo "HTTP $CODE"
+            if [[ "$CODE" == "200" || "$CODE" == "202" ]]; then exit 0; fi
+            [ $i -lt 3 ] && sleep 40
+          done
+          exit 1
 
   # ── Deploy Frontend ─────────────────────────────────────────────────────────
   deploy-frontend:
@@ -101,12 +115,22 @@ jobs:
             node_modules/
 
       - name: Deploy to App Service
-        uses: Wandalen/wretry.action@v3
-        with:
-          action: azure/webapps-deploy@v3
-          with: |
-            app-name: ${{ secrets.FRONTEND_APP_NAME }}
-            publish-profile: ${{ secrets.FRONTEND_PUBLISH_PROFILE }}
-            package: frontend.zip
-          attempt_limit: 3
-          attempt_delay: 30000
+        env:
+          PROFILE: ${{ secrets.FRONTEND_PUBLISH_PROFILE }}
+        run: |
+          SCM=$(echo "$PROFILE" | grep -oP 'publishUrl="\K[^"]+' | head -1 | sed 's/:443//')
+          USER=$(echo "$PROFILE" | grep -oP 'userName="\K[^"]+' | head -1)
+          PASS=$(echo "$PROFILE" | grep -oP 'userPWD="\K[^"]+' | head -1)
+          for i in 1 2 3; do
+            echo "Deploy attempt $i..."
+            CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+              "https://${SCM}/api/zipdeploy" \
+              -u "${USER}:${PASS}" \
+              -H "Content-Type: application/zip" \
+              --data-binary @frontend.zip \
+              --max-time 300)
+            echo "HTTP $CODE"
+            if [[ "$CODE" == "200" || "$CODE" == "202" ]]; then exit 0; fi
+            [ $i -lt 3 ] && sleep 40
+          done
+          exit 1
