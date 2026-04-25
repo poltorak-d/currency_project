@@ -1,10 +1,10 @@
-# Shared App Service Plan - F1 free tier (Linux)
+# Shared App Service Plan (Linux) — SKU via var.sku_name (see root app_service_sku)
 resource "azurerm_service_plan" "this" {
   name                = var.plan_name
   location            = var.location
   resource_group_name = var.resource_group_name
   os_type             = "Linux"
-  sku_name            = "F1"
+  sku_name            = var.sku_name
 }
 
 # ── Backend (Python 3.11 / FastAPI) ──────────────────────────────────────────
@@ -24,7 +24,7 @@ resource "azurerm_linux_web_app" "backend" {
   }
 
   site_config {
-    always_on = false # F1 does not support always-on
+    always_on = var.sku_name != "F1" # F1 does not support always-on
 
     application_stack {
       python_version = "3.11"
@@ -66,7 +66,7 @@ resource "azurerm_linux_web_app" "frontend" {
   }
 
   site_config {
-    always_on = false # F1 does not support always-on
+    always_on = var.sku_name != "F1"
 
     application_stack {
       node_version = "20-lts"

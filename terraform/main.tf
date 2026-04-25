@@ -67,12 +67,13 @@ module "key_vault" {
   ])
 }
 
-# ── App Services (F1 free tier) ───────────────────────────────────────────────
+# ── App Services (shared Linux plan; SKU from var.app_service_sku) ───────────
 module "app_service" {
   source              = "./modules/app_service"
   resource_group_name = module.resource_group.name
   location            = module.resource_group.location
   plan_name           = local.plan_name
+  sku_name            = var.app_service_sku
   backend_app_name    = local.backend_name
   frontend_app_name   = local.frontend_name
   key_vault_name      = module.key_vault.vault_name

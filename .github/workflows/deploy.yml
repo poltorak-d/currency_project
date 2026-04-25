@@ -7,10 +7,33 @@ on:
   workflow_dispatch:
 
 jobs:
+  # ── Test Backend ─────────────────────────────────────────────────────────────
+  test-backend:
+    name: Test Backend (pytest)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install test dependencies
+        working-directory: backend
+        run: pip install fastapi uvicorn pydantic pydantic-settings httpx redis sqlalchemy asyncpg pytest pytest-asyncio pytest-mock
+
+      - name: Run tests
+        working-directory: backend
+        run: python -m pytest tests/ -v
+
   # ── Deploy Backend ──────────────────────────────────────────────────────────
   deploy-backend:
     name: Deploy Backend (FastAPI)
     runs-on: ubuntu-latest
+    needs: test-backend
 
     steps:
       - name: Checkout code
@@ -27,11 +50,15 @@ jobs:
             --exclude=".env"
 
       - name: Deploy to App Service
-        uses: azure/webapps-deploy@v3
+        uses: Wandalen/wretry.action@v3
         with:
-          app-name: ${{ secrets.BACKEND_APP_NAME }}
-          publish-profile: ${{ secrets.BACKEND_PUBLISH_PROFILE }}
-          package: backend.zip
+          action: azure/webapps-deploy@v3
+          with: |
+            app-name: ${{ secrets.BACKEND_APP_NAME }}
+            publish-profile: ${{ secrets.BACKEND_PUBLISH_PROFILE }}
+            package: backend.zip
+          attempt_limit: 3
+          attempt_delay: 30000
 
   # ── Deploy Frontend ─────────────────────────────────────────────────────────
   deploy-frontend:
@@ -74,8 +101,12 @@ jobs:
             node_modules/
 
       - name: Deploy to App Service
-        uses: azure/webapps-deploy@v3
+        uses: Wandalen/wretry.action@v3
         with:
-          app-name: ${{ secrets.FRONTEND_APP_NAME }}
-          publish-profile: ${{ secrets.FRONTEND_PUBLISH_PROFILE }}
-          package: frontend.zip
+          action: azure/webapps-deploy@v3
+          with: |
+            app-name: ${{ secrets.FRONTEND_APP_NAME }}
+            publish-profile: ${{ secrets.FRONTEND_PUBLISH_PROFILE }}
+            package: frontend.zip
+          attempt_limit: 3
+          attempt_delay: 30000
