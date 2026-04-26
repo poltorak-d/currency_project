@@ -68,9 +68,10 @@ jobs:
             "https://${SCM}/api/zipdeploy?isAsync=true" \
             -u "${USER}:${PASS}" \
             -H "Content-Type: application/zip" \
+            -H "Expect:" \
             --data-binary @backend.zip \
             --max-time 300)
-          CODE=$(echo "$RESPONSE" | grep -oP "^HTTP/\S+ \K\d+")
+          CODE=$(echo "$RESPONSE" | grep -oP "^HTTP/\S+ \K\d+" | tail -1)
           echo "HTTP ${CODE}"
           [[ "$CODE" != "202" ]] && { echo "Submission failed"; exit 1; }
 
@@ -140,9 +141,10 @@ jobs:
             "https://${SCM}/api/zipdeploy?isAsync=true" \
             -u "${USER}:${PASS}" \
             -H "Content-Type: application/zip" \
+            -H "Expect:" \
             --data-binary @frontend.zip \
             --max-time 300)
-          CODE=$(echo "$RESPONSE" | grep -oP "^HTTP/\S+ \K\d+")
+          CODE=$(echo "$RESPONSE" | grep -oP "^HTTP/\S+ \K\d+" | tail -1)
           echo "HTTP ${CODE}"
           [[ "$CODE" != "202" ]] && { echo "Submission failed"; exit 1; }
 
